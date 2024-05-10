@@ -1,5 +1,5 @@
-from controller import Controller
+from controller import OthelloController
 
 if __name__ == "__main__":
-    c = Controller()
+    c = OthelloController()
     c.start_game()

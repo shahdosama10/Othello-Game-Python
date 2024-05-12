@@ -1,7 +1,3 @@
-from player import Player
-
-
-
 class Model:
     def __init__(self):
         # define the current player with black piece player

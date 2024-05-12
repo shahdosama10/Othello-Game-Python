@@ -54,7 +54,8 @@ class OthelloView(tk.Tk):
         # Initialize the game board
         self.create_game_board()
         if self.controller.HumanPlayer.color == "W":
-            self.after(100,self.controller.make_computer_move(self.controller.ComputerPlayer.color))
+            #####################################
+            self.after(2000,self.controller.make_computer_move(self.controller.ComputerPlayer.color))
             self.board = self.controller.get_board()
             self.update_board_display(self.board)
             self.controller.ComputerPlayer.number_of_pieces -= 1
@@ -81,6 +82,7 @@ class OthelloView(tk.Tk):
         i, j = x // 50, y // 50
         self.controller.make_move(i, j)
     def update_board_display(self, board):
+        valid_moves = self.controller.model.get_valid_moves(self.controller.HumanPlayer.color)
         for i in range(self.board_size):
             for j in range(self.board_size):
                 if board[i][j] == "B":
@@ -89,6 +91,13 @@ class OthelloView(tk.Tk):
                 elif board[i][j] == "W":
                     x, y = i * 50 + 25, j * 50 + 25
                     self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="white")
+                else:
+                    if [i+1, j+1] in valid_moves:
+                        x, y = i * 50 + 25, j * 50 + 25
+                        self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="", outline="gray", dash=(4, 4))
+                    else:
+                        x, y = i * 50 + 25, j * 50 + 25
+                        self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="#2c3e50" ,outline="#2c3e50")
 
     def Win(self,Player):
         messagebox.showinfo("Game Over", f"{Player} wins!")
@@ -99,7 +108,7 @@ class OthelloView(tk.Tk):
     def InvalidMove(self):
         messagebox.showinfo("Invalid Move", "Invalid Move!")
     def NoMove(self,Player):
-        messagebox.showinfo("No Move", f"{Player} has no move!")
+        messagebox.showinfo("No Move", "player that has no move is the player has the color: "+Player)
 
     def GameOver(self,HumanPlayer,ComputerPlayer):
         board = self.controller.get_board()
@@ -117,5 +126,4 @@ class OthelloView(tk.Tk):
             self.Win("Computer")
         else:
             self.Tie()
-
 

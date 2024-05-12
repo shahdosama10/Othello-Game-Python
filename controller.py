@@ -36,34 +36,84 @@ class OthelloController:
             return True
         return False
     def make_move(self, x, y):
-        if (self.CheckGame() or(self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color)) ):
-            self.view.GameOver(self.HumanPlayer,self.ComputerPlayer)
-        if (self.SkipTurn(self.HumanPlayer.color) )==False :
-            if self.model.make_move(x + 1, y + 1, self.HumanPlayer.color,self.model.GetIndexsOfFlipped(x + 1, y + 1, self.HumanPlayer.color)):
-                self.view.update_board_display(self.model.get_board())
-                self.HumanPlayer.number_of_pieces -= 1
-                if (self.CheckGame() or (
-                        self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
-                    self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
-                if self.SkipTurn(self.ComputerPlayer.color)== False:
-                    self.make_computer_move(self.ComputerPlayer.color)
-                    self.view.update_board_display(self.model.get_board())
-                    self.ComputerPlayer.number_of_pieces -= 1
-                    if (self.CheckGame() or (
-                            self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
-                        self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
-                else:
-                    self.view.NoMove(self.ComputerPlayer.color)
-            else:
-                self.view.InvalidMove()
-        else:
-            self.view.NoMove(self.HumanPlayer.color)
-            self.make_computer_move(self.ComputerPlayer.color)
-            self.view.update_board_display(self.model.get_board())
-            self.ComputerPlayer.number_of_pieces -= 1
-            if (self.CheckGame() or (
-                        self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
-                self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+          if self.model.make_move(x + 1, y + 1, self.HumanPlayer.color,self.model.GetIndexsOfFlipped(x + 1, y + 1, self.HumanPlayer.color)):
+              self.view.update_board_display(self.model.get_board())
+              self.HumanPlayer.number_of_pieces -= 1
+              if (self.CheckGame() or (
+                      self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+                  self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+                  return
+              if self.SkipTurn(self.ComputerPlayer.color)== False:
+                  self.make_computer_move(self.ComputerPlayer.color)
+                  self.view.after(1000)
+                  self.view.update_board_display(self.model.get_board())
+                  self.ComputerPlayer.number_of_pieces -= 1
+                  if (self.CheckGame() or (
+                      self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+                         self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+                         return
+                  while  self.SkipTurn(self.HumanPlayer.color) == True :
+                        self.view.NoMove(self.HumanPlayer.color)
+                        self.make_computer_move(self.ComputerPlayer.color)
+                        self.view.after(1000)
+                        self.view.update_board_display(self.model.get_board())
+                        self.ComputerPlayer.number_of_pieces -= 1
+                        if (self.CheckGame() or (
+                                self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+                            self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+                            return
+              else:
+                  self.view.NoMove(self.ComputerPlayer.color)
+          else:
+              self.view.InvalidMove()
+
+
+
+
 
     def make_computer_move(self, ComputerPlayercolor):
         self.model.make_computer_move(ComputerPlayercolor)
+
+
+
+    def SkipTurn(self, player):
+        if self.model.get_valid_moves(player) == []:
+            return True
+        return False
+
+
+
+
+    # def make_move(self, x, y):
+        # if (self.CheckGame() or(self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color)) ):
+        #     self.view.GameOver(self.HumanPlayer,self.ComputerPlayer)
+        #     return
+        # if (self.SkipTurn(self.HumanPlayer.color) )== False :
+        #     if self.model.make_move(x + 1, y + 1, self.HumanPlayer.color,self.model.GetIndexsOfFlipped(x + 1, y + 1, self.HumanPlayer.color)):
+        #         self.view.update_board_display(self.model.get_board())
+        #         self.HumanPlayer.number_of_pieces -= 1
+        #         if (self.CheckGame() or (
+        #                 self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+        #             self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+        #             return
+        #         if self.SkipTurn(self.ComputerPlayer.color)== False:
+        #             self.make_computer_move(self.ComputerPlayer.color)
+        #             self.view.update_board_display(self.model.get_board())
+        #             self.ComputerPlayer.number_of_pieces -= 1
+        #             if (self.CheckGame() or (
+        #                     self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+        #                 self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+        #                 return
+        #         else:
+        #             self.view.NoMove(self.ComputerPlayer.color)
+        #     else:
+        #         self.view.InvalidMove()
+        # else:
+        #     self.view.NoMove(self.HumanPlayer.color)
+        #     self.make_computer_move(self.ComputerPlayer.color)
+        #     self.view.update_board_display(self.model.get_board())
+        #     self.ComputerPlayer.number_of_pieces -= 1
+        #     if (self.CheckGame() or (
+        #                 self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
+        #         self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
+        #         return

@@ -4,86 +4,118 @@ from tkinter import messagebox
 class OthelloView(tk.Tk):
     def __init__(self, controller):
         super().__init__()
+        self.board_size = 8
         self.controller = controller
         self.title("Othello")
         
         # The currect state is menu
         self.state = "menu"
-        
         # Initialize the menu screen
         self.create_menu_screen()
-    
+
     def create_menu_screen(self):
 
-        difficulty_label = tk.Label(self, text="Select Difficulty:")
+        self.title("Othello")
+        self.configure(background="#2c3e50")
+        text_color = "#ecf0f1"
+        button_color = "#3498db"
+        selected_button_color = "#2980b9"
+        self.geometry("400x200")
+        self.eval('tk::PlaceWindow . center')
+        difficulty_label = tk.Label(self, text="Select Difficulty:", fg=text_color, bg="#2c3e50",
+                                    font=("Helvetica", 14))
         difficulty_label.pack(pady=10)
-        
-        # Levels radio buttons
         self.difficulty_var = tk.StringVar(value="Easy")
         difficulties = ["Easy", "Medium", "Hard"]
-        
         for difficulty in difficulties:
-            radio_button = tk.Radiobutton(self, text=difficulty, variable=self.difficulty_var, value=difficulty)
+            radio_button = tk.Radiobutton(self, text=difficulty, variable=self.difficulty_var, value=difficulty,
+                                          fg=text_color, bg="#2c3e50", font=("Helvetica", 12),
+                                          selectcolor=selected_button_color, activeforeground=text_color,
+                                          activebackground=button_color, relief=tk.FLAT)
             radio_button.pack(anchor='w')
-        
-        # Start button
-        start_button = tk.Button(self, text="Start Game", command=self.start_game)
+        start_button = tk.Button(self, text="Start Game", command=self.start_game, fg=text_color, bg=button_color,
+                                 font=("Helvetica", 14), relief=tk.FLAT, activeforeground=text_color,
+                                 activebackground=selected_button_color)
         start_button.pack(pady=20)
-    
+
     def start_game(self):
         self.controller.set_difficulty(self.difficulty_var.get())
-        
-        # The currect state is game
+         #Message box to choose the player color
+        player_color = messagebox.askquestion("Player Color", "Do you want to play as Black?")
+        if player_color == "yes":
+            self.controller.HumanPlayer.color = "B"
+            self.controller.ComputerPlayer.color = "W"
+        else:
+            self.controller.HumanPlayer.color = "W"
+            self.controller.ComputerPlayer.color = "B"
+
         self.state = "game"
-        
+        #input to choose the player color
         # Initialize the game board
         self.create_game_board()
-    
+        if self.controller.HumanPlayer.color == "W":
+            self.after(100,self.controller.make_computer_move(self.controller.ComputerPlayer.color))
+            self.board = self.controller.get_board()
+            self.update_board_display(self.board)
+            self.controller.ComputerPlayer.number_of_pieces -= 1
+
+
     def create_game_board(self):
-        # Clear previous widgets
         for widget in self.winfo_children():
             widget.destroy()
-        
-        # Create the game board frame
-        self.board_frame = tk.Frame(self)
-        self.board_frame.pack()
-        
-        self.square_size = 50
-        
-        # Initialize the board buttons with None values
-        self.board_buttons = [[None for _ in range(8)] for _ in range(8)]
-        
-        # Create 8x8 buttons
-        for row in range(8):
-            for col in range(8):
-                button = tk.Button(self.board_frame, width=4, height=2,
-                            command=lambda r=row, c=col: self.controller.handle_square_click(r, c))
-                button.grid(row=row, column=col, padx=2, pady=2)
-                self.board_buttons[row][col] = button
-        
-        # Game board initial state (4 pieces in the middle)
-        self.controller.reset_game()
-        
-        # Update the board ui
-        self.update_board_display(self.controller.get_board())
-    
+        self.title("Othello")
+        self.configure(background="#2c3e50")
+        self.geometry("400x400")
+        self.eval('tk::PlaceWindow . center')
+        self.canvas = tk.Canvas(self, width=400, height=400, bg="#2c3e50")
+        self.canvas.pack()
+        for i in range(8):
+            self.canvas.create_line(i * 50, 0, i * 50, 400, fill="white")
+            self.canvas.create_line(0, i * 50, 400, i * 50, fill="white")
+        self.canvas.bind("<Button-1>", self.on_click)
+        self.board = self.controller.get_board()
+        self.update_board_display(self.board)
+
+    def on_click(self, event):
+        x, y = event.x, event.y
+        i, j = x // 50, y // 50
+        self.controller.make_move(i, j)
     def update_board_display(self, board):
-        # Update the board display based on the game state
-        for row in range(8):
-            for col in range(8):
-                current_value = board[row][col]
-                color = None
-                
-                if current_value == "B":
-                    color = "black"
-                elif current_value == "W":
-                    color = "white"
-                else:
-                    color = "green"
-                
-                # Update the button background color
-                self.board_buttons[row][col].config(bg=color)
-    
-    def display_winner(self, winner):
-        # Display the winner 
-        messagebox.showinfo("Game Over", f"The winner is: {winner}")
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if board[i][j] == "B":
+                    x, y = i * 50 + 25, j * 50 + 25
+                    self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="black")
+                elif board[i][j] == "W":
+                    x, y = i * 50 + 25, j * 50 + 25
+                    self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="white")
+
+    def Win(self,Player):
+        messagebox.showinfo("Game Over", f"{Player} wins!")
+        self.quit()
+    def Tie(self):
+        messagebox.showinfo("Game Over", "It's a tie!")
+        self.quit()
+    def InvalidMove(self):
+        messagebox.showinfo("Invalid Move", "Invalid Move!")
+    def NoMove(self,Player):
+        messagebox.showinfo("No Move", f"{Player} has no move!")
+
+    def GameOver(self,HumanPlayer,ComputerPlayer):
+        board = self.controller.get_board()
+        player1 = 0
+        player2 = 0
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == HumanPlayer.color:
+                    player1 += 1
+                elif board[i][j] == ComputerPlayer.color:
+                    player2 += 1
+        if player1 > player2:
+            self.Win("Human")
+        elif player1 < player2:
+            self.Win("Computer")
+        else:
+            self.Tie()
+
+

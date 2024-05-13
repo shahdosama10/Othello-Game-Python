@@ -178,7 +178,9 @@ class Model:
 
                 # Make the move on the board with outflanking
                 self.make_move(move[0], move[1], ComputerPlayerColor, flipped)
-
+                
+                # get one piece from the computer pieces
+                self.number_of_computer_pieces -=1
 
 
                 # Recursively evaluate the position after making the move
@@ -189,6 +191,9 @@ class Model:
 
                 # Undo the move to revert the board to its previous state
                 self.undo_move(move[0], move[1], flipped)
+                
+                # return the piece to the computer pieces
+                self.number_of_computer_pieces +=1
 
                 # Update the maximum value found
                 if value > max_value:
@@ -236,6 +241,9 @@ class Model:
  
                 self.make_move(move[0], move[1], HumanPlayerColor, flipped)
 
+                # get one piece from the human pieces
+                self.number_of_human_pieces -=1
+
                 # Recursively evaluate the position after making the move
                 # we don't want to need the move returned by this function
                 # the importance thing is the current move 
@@ -245,6 +253,9 @@ class Model:
                 # Undo the move to revert the board to its previous state
 
                 self.undo_move(move[0], move[1], flipped)
+
+                # retrun the piece to the human pieces
+                self.number_of_human_pieces +=1
                 
                 # Update the mimimum value found
                 if value < min_value:

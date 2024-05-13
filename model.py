@@ -251,6 +251,16 @@ class Model:
 
 
 #================================================================================================================================
+    def return_number_of_white_black(self):
+        white = 0
+        black = 0
+        for i in range(8):
+            for j in range(8):
+                if self.board[i][j] == 'W':
+                    white += 1
+                elif self.board[i][j] == 'B':
+                    black += 1
+        return white, black
 
 
 

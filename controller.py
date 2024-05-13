@@ -51,7 +51,7 @@ class OthelloController:
                   return
               if self.SkipTurn(self.ComputerPlayer.color)== False:
                   self.make_computer_move( self.depth, self.ComputerPlayer.color , self.HumanPlayer.color)
-                  self.view.after(1000)
+                  self.view.after(100)
                   self.view.update_board_display(self.model.get_board())
                   self.ComputerPlayer.number_of_pieces -= 1
                   if (self.CheckGame() or (
@@ -61,7 +61,7 @@ class OthelloController:
                   while  self.SkipTurn(self.HumanPlayer.color) == True :
                         self.view.NoMove(self.HumanPlayer.color)
                         self.make_computer_move(self.depth, self.ComputerPlayer.color ,self.HumanPlayer.color)
-                        self.view.after(1000)
+                        self.view.after(100)
                         self.view.update_board_display(self.model.get_board())
                         self.ComputerPlayer.number_of_pieces -= 1
                         if (self.CheckGame() or (

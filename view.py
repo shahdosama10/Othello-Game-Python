@@ -56,7 +56,7 @@ class OthelloView(tk.Tk):
         self.create_game_board()
         if self.controller.HumanPlayer.color == "W":
             #####################################
-            self.after(100, self.controller.make_computer_move(self.controller.ComputerPlayer.color))
+            self.after(100,self.controller.make_computer_move(self.controller.depth, self.controller.ComputerPlayer.color , self.controller.HumanPlayer.color))            
             self.board = self.controller.get_board()
             self.update_board_display(self.board)
             self.controller.ComputerPlayer.number_of_pieces -= 1

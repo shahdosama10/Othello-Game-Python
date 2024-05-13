@@ -8,10 +8,17 @@ class Model:
         self.board[4][4] = "W"
         self.row = 8
         self.col = 8
+        self.number_of_human_pieces = 30
+        self.number_of_computer_pieces = 30
+
+#================================================================================================================================
 
 
     def get_board(self):
         return self.board
+    
+#================================================================================================================================
+
     def print_board(self):
         print('  1 2 3 4 5 6 7 8')
         print(' +-+-+-+-+-+-+-+-+')
@@ -20,6 +27,8 @@ class Model:
             for j in range(self.col):
                 print(self.board[i][j], end='|')
             print('\n +-+-+-+-+-+-+-+-+')
+
+#================================================================================================================================
 
     def is_valid_move(self, row, col, player):
         if row < 1 or row > 8 or col < 1 or col > 8:
@@ -43,6 +52,9 @@ class Model:
                     x += d[0]
                     y += d[1]
         return False
+    
+#================================================================================================================================
+
     def get_valid_moves(self, player):
         valid_moves = []
         for i in range(8):
@@ -50,6 +62,9 @@ class Model:
                 if self.is_valid_move(i + 1, j + 1, player):
                     valid_moves.append([i + 1, j + 1])
         return valid_moves
+    
+#================================================================================================================================
+
     def GetIndexsOfFlipped(self, row, col, player):
         if (self.is_valid_move(row, col, player) == False):
             return []
@@ -68,7 +83,9 @@ class Model:
             if x >= 0 and x < 8 and y >= 0 and y < 8 and self.board[x][y] == player:
                 flipped += temp
         return flipped
-    
+
+#================================================================================================================================
+
     
     def make_move(self, row, col, player, flipped=[]):
         if self.is_valid_move(row, col, player) == False:
@@ -108,13 +125,34 @@ class Model:
             self.board[i][j] = opponent
 
 
+#================================================================================================================================
+
+    # check if the Game is finished or not
+    def check_game_over(self):
+
+        if self.number_of_computer_pieces == 0:
+            return True
+        elif self.number_of_human_pieces == 0:
+            return True
+        
+        # if no valid move for both players
+
+        elif self.get_valid_moves('W') == [] and self.get_valid_moves('B') == []:
+            return True
+        return False
+    
+
+#================================================================================================================================
 
 
     def minimax(self, depth, alpha, beta, maximizingPlayer, ComputerPlayerColor, HumanPlayerColor):
         
-        # Base case: If depth is 0, return the utility value of the current state
-        if depth == 0:
-            return None, self.get_utility(ComputerPlayerColor)
+        # Base case: If depth is 0 or game is over return the utility value of the current state
+        if depth == 0 or self.check_game_over():
+            if maximizingPlayer:
+                return None, self.get_utility(False,HumanPlayerColor)
+            else:
+                return None, self.get_utility(True,ComputerPlayerColor)
 
         # Maximizer's turn
         if maximizingPlayer:
@@ -127,7 +165,7 @@ class Model:
 
             # If no valid moves available, return the utility value
 
-            if not valid_moves:
+            if valid_moves == []:
                 _, value = self.minimax(depth - 1, alpha, beta, False, ComputerPlayerColor, HumanPlayerColor)
                 return None, value
     
@@ -140,6 +178,8 @@ class Model:
 
                 # Make the move on the board with outflanking
                 self.make_move(move[0], move[1], ComputerPlayerColor, flipped)
+
+
 
                 # Recursively evaluate the position after making the move
                 # we don't want to need the move returned by this function
@@ -180,7 +220,7 @@ class Model:
             
             # If no valid moves available, return the utility value
             
-            if not valid_moves:
+            if valid_moves == []:
                 _, value = self.minimax(depth - 1, alpha, beta, True, ComputerPlayerColor, HumanPlayerColor)
                 return None, value 
 
@@ -246,11 +286,23 @@ class Model:
 
 #================================================================================================================================
 
-    def get_utility(self,color):
+    def get_utility(self,isComputer,color):
+        if not isComputer:
+            if color == 'B':
+                color = 'W'
+            else:
+                color = 'B'  
+
         computer_count, human_count = self.getScores(color)
 
-        # return difference between the number of computer pieces and human pieces
-        return computer_count - human_count
+        # if is computer return difference between the number of computer pieces and human pieces
+        if isComputer:
+            return computer_count - human_count
+        
+        # else that mean is human return difference between the number of human pieces and computer pieces
+        
+        else :
+            return human_count - computer_count
 
 
 
@@ -268,6 +320,7 @@ class Model:
         return white, black
 
 
+#================================================================================================================================
 
 
 

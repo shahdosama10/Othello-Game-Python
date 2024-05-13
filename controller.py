@@ -12,6 +12,8 @@ class OthelloController:
         self.view = OthelloView(self)
         self.difficulty = "Easy"  # Default difficulty level
         self.depth = 1
+        if self.ComputerPlayer.number_of_pieces == 29:
+            self.model.number_of_computer_pieces = 29
         # GUI loop
         self.view.mainloop()
 
@@ -45,6 +47,7 @@ class OthelloController:
           if self.model.make_move(x + 1, y + 1, self.HumanPlayer.color,self.model.GetIndexsOfFlipped(x + 1, y + 1, self.HumanPlayer.color)):
               self.view.update_board_display(self.model.get_board())
               self.HumanPlayer.number_of_pieces -= 1
+              self.model.number_of_human_pieces -= 1
               if (self.CheckGame() or (
                       self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
                   self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
@@ -54,6 +57,7 @@ class OthelloController:
                   self.view.after(100)
                   self.view.update_board_display(self.model.get_board())
                   self.ComputerPlayer.number_of_pieces -= 1
+                  self.model.number_of_computer_pieces -= 1
                   if (self.CheckGame() or (
                       self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
                          self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
@@ -64,6 +68,7 @@ class OthelloController:
                         self.view.after(100)
                         self.view.update_board_display(self.model.get_board())
                         self.ComputerPlayer.number_of_pieces -= 1
+                        self.model.number_of_computer_pieces -= 1
                         if (self.CheckGame() or (
                                 self.SkipTurn(self.ComputerPlayer.color) and self.SkipTurn(self.HumanPlayer.color))):
                             self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)

@@ -114,7 +114,7 @@ class Model:
         
         # Base case: If depth is 0, return the utility value of the current state
         if depth == 0:
-            return None, self.get_utility()
+            return None, self.get_utility(ComputerPlayerColor)
 
         # Maximizer's turn
         if maximizingPlayer:
@@ -246,8 +246,13 @@ class Model:
 
 #================================================================================================================================
 
-    def get_utility(self):
-        return 1
+    def get_utility(self,color):
+        computer_count, human_count = self.getScores(color)
+
+        # return difference between the number of computer pieces and human pieces
+        return computer_count - human_count
+
+
 
 
 #================================================================================================================================

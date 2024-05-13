@@ -9,6 +9,7 @@ class Model:
         self.row = 8
         self.col = 8
 
+
     def get_board(self):
         return self.board
     def print_board(self):
@@ -67,6 +68,8 @@ class Model:
             if x >= 0 and x < 8 and y >= 0 and y < 8 and self.board[x][y] == player:
                 flipped += temp
         return flipped
+    
+    
     def make_move(self, row, col, player, flipped=[]):
         if self.is_valid_move(row, col, player) == False:
             return False
@@ -75,13 +78,182 @@ class Model:
             self.board[i][j] = player
         return True
 
+#================================================================================================================================
+
+
     # make computer move
-    def make_computer_move(self, ComputerPlayercolor):
-        move = self.get_valid_moves(ComputerPlayercolor)[0]
+    def make_computer_move(self, depth,ComputerPlayercolor , HumanPlayerColor):
+        
+        # get the best move for the computer using minimax algorithm
+
+        move , _ = self.minimax(depth , -999,999 ,True ,ComputerPlayercolor , HumanPlayerColor)
+
+        # Get the indices of flipped pieces after getting the move
+
         flipped = self.GetIndexsOfFlipped(move[0], move[1], ComputerPlayercolor)
+        
+        # Make the move on the board with outflanking
+
         self.make_move(move[0], move[1], ComputerPlayercolor, flipped)
-    def minimax(self):
-        pass
+
+
+#================================================================================================================================
+
+    # return the board to the previous state 
+    # using in minimax algorithm to undo the move that was made
+    def undo_move(self, row, col, flipped):
+        self.board[row - 1][col - 1] = '-'  # 
+        for i, j in flipped:
+            opponent = 'B' if self.board[i][j] == 'W' else 'W'
+            self.board[i][j] = opponent
+
+
+
+
+    def minimax(self, depth, alpha, beta, maximizingPlayer, ComputerPlayerColor, HumanPlayerColor):
+        
+        # Base case: If depth is 0, return the utility value of the current state
+        if depth == 0:
+            return None, self.get_utility()
+
+        # Maximizer's turn
+        if maximizingPlayer:
+            best_move = None
+            max_value = -999
+
+            # get all valid moves
+
+            valid_moves = self.get_valid_moves(ComputerPlayerColor)
+
+            # If no valid moves available, return the utility value
+
+            if not valid_moves:
+                _, value = self.minimax(depth - 1, alpha, beta, False, ComputerPlayerColor, HumanPlayerColor)
+                return None, value
+    
+            # loop on all valid moves of the current state and find the best one
+
+            for move in valid_moves:
+
+                # Get the indices of flipped pieces after getting the move
+                flipped = self.GetIndexsOfFlipped(move[0], move[1], ComputerPlayerColor)
+
+                # Make the move on the board with outflanking
+                self.make_move(move[0], move[1], ComputerPlayerColor, flipped)
+
+                # Recursively evaluate the position after making the move
+                # we don't want to need the move returned by this function
+                # the importance thing is the current move 
+                _, value = self.minimax(depth - 1, alpha, beta, False, ComputerPlayerColor, HumanPlayerColor)
+
+
+                # Undo the move to revert the board to its previous state
+                self.undo_move(move[0], move[1], flipped)
+
+                # Update the maximum value found
+                if value > max_value:
+                    max_value = value
+                    best_move = move
+                
+                # Update the alpha value 
+
+                alpha = max(alpha, max_value)
+                
+                # if the beta value is less than or equal to alpha, stop searching
+                
+                if beta <= alpha:
+                    break
+            
+            # return the best move and the utility value.
+            return best_move, max_value
+
+        
+        # Minimizer's turn
+        
+        else:
+            best_move = None
+            min_value = 999
+
+            # get all valid moves
+
+            valid_moves = self.get_valid_moves(HumanPlayerColor)
+            
+            # If no valid moves available, return the utility value
+            
+            if not valid_moves:
+                _, value = self.minimax(depth - 1, alpha, beta, True, ComputerPlayerColor, HumanPlayerColor)
+                return None, value 
+
+            # loop on all valid moves of the current state and find the best one
+
+            for move in valid_moves:
+
+                # Get the indices of flipped pieces after getting the move
+
+                flipped = self.GetIndexsOfFlipped(move[0], move[1], HumanPlayerColor)
+
+                # Make the move on the board with outflanking
+ 
+                self.make_move(move[0], move[1], HumanPlayerColor, flipped)
+
+                # Recursively evaluate the position after making the move
+                # we don't want to need the move returned by this function
+                # the importance thing is the current move 
+               
+                _, value = self.minimax(depth - 1, alpha, beta, True, ComputerPlayerColor, HumanPlayerColor)
+
+                # Undo the move to revert the board to its previous state
+
+                self.undo_move(move[0], move[1], flipped)
+                
+                # Update the mimimum value found
+                if value < min_value:
+                    min_value = value
+                    best_move = move
+
+
+                # Update the beta value 
+
+                beta = min(beta, min_value)
+
+                # if the beta value is less than or equal to alpha, stop searching
+
+                if beta <= alpha:
+                    break
+            
+            # return the best move and the utility value.
+
+            return best_move, min_value
+
+
+#================================================================================================================================
+
+
+    def getScores(self , computerPlayerColor):
+        computer_count = 0
+        human_count = 0
+
+        for i in range(self.row):
+            for j in range(self.col):
+                if self.board[i][j] == computerPlayerColor:
+                    computer_count += 1
+                else:
+                    human_count += 1
+
+        
+        return computer_count , human_count
+
+
+#================================================================================================================================
 
     def get_utility(self):
-        pass
+        return 1
+
+
+#================================================================================================================================
+
+
+
+
+
+   

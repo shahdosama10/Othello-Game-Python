@@ -11,12 +11,18 @@ class OthelloController:
         self.ComputerPlayer = Player()
         self.view = OthelloView(self)
         self.difficulty = "Easy"  # Default difficulty level
+        self.depth = 1
         # GUI loop
         self.view.mainloop()
 
     def set_difficulty(self, difficulty):
         # Set the difficulty level
         self.difficulty = difficulty
+        if (self.difficulty == "Medium"):
+            self.depth = 3
+        elif (self.difficulty == "Hard"):
+            self.depth = 5
+            
     def get_difficulty(self):
         # Return the difficulty level
         return self.difficulty
@@ -44,7 +50,7 @@ class OthelloController:
                   self.view.GameOver(self.HumanPlayer, self.ComputerPlayer)
                   return
               if self.SkipTurn(self.ComputerPlayer.color)== False:
-                  self.make_computer_move(self.ComputerPlayer.color)
+                  self.make_computer_move( self.depth, self.ComputerPlayer.color , self.HumanPlayer.color)
                   self.view.after(1000)
                   self.view.update_board_display(self.model.get_board())
                   self.ComputerPlayer.number_of_pieces -= 1
@@ -54,7 +60,7 @@ class OthelloController:
                          return
                   while  self.SkipTurn(self.HumanPlayer.color) == True :
                         self.view.NoMove(self.HumanPlayer.color)
-                        self.make_computer_move(self.ComputerPlayer.color)
+                        self.make_computer_move(self.depth, self.ComputerPlayer.color ,self.HumanPlayer.color)
                         self.view.after(1000)
                         self.view.update_board_display(self.model.get_board())
                         self.ComputerPlayer.number_of_pieces -= 1
@@ -71,8 +77,8 @@ class OthelloController:
 
 
 
-    def make_computer_move(self, ComputerPlayercolor):
-        self.model.make_computer_move(ComputerPlayercolor)
+    def make_computer_move(self, depth,ComputerPlayercolor , HumanPlayerColor):
+        self.model.make_computer_move(depth , ComputerPlayercolor, HumanPlayerColor)
 
 
 

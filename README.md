@@ -1,11 +1,116 @@
-___Just a reminder___<br> 
-we will use GitHub so I want to remind us of the basic process with get while we work on the project:
-  1. firstly clone the project on your PC using `git clone github-URL`
-  2. before writing any code, you need to create a branch using `git checkout -b branch-name`
-  3. after coding in the project and uploading the work start with `git add file-name`
-  4. then commit your files with what you doing in it with `git commit -m "your-commit-here"`
-  5. then push your code on github with `git push origin branch-name`
-  6. then go to github.com, to the project repository make a pull request for your job, and merge your job
-  7. then go locally on your PC after merging the code and change the branch to the main one using `git checkout main`
-  8. and pull the final version of the code using `git pull origin main`
-  9. (_Optional and preferred step_) after that go and delete the branch that you used before using `git branch -d branch-name`
+# Othello Board Game
+
+This project implements the Othello board game in Human vs. Computer mode using Python, utilizing the alpha-beta pruning algorithm for computer moves.
+
+## About Othello
+
+Othello is a strategy board game for two players, played on an 8×8 uncheckered board using 64 disks that are white on one side and black on the other.
+
+Players take turns placing disks with their color facing up, flipping opponent disks to their color when bounded by the newly placed disk and another disk of their color. 
+
+The game ends when no more moves are possible, and the player with the most disks of their color wins.
+
+
+## Project Requirements
+
+- **Game Mode**: Human vs. Computer mode only.
+  
+- **Algorithm**: Alpha-beta pruning.
+  
+- **Programming Language**: Python only.
+
+## Project Features
+
+1. **Game Controller**:
+   - Manages game turns between players.
+     
+   - Receives user moves.
+     
+   - Updates the game board.
+     
+   - Declares the end of the game.
+
+2. **Knowledge Representation**:
+   - Represents the game state appropriately.
+
+3. **Utility Function**:
+   - Evaluates the current game state for a given player.
+
+4. **Alpha-beta Pruning Implementation**:
+   - Implement the alpha-beta pruning algorithm.
+     
+   - Support for different difficulty levels:
+     
+     - Easy: Depth 1
+       
+     - Medium: Depth 3
+       
+     - Hard: Depth 5
+
+5. **GUI**:
+   - User interface in Python.
+
+
+## Game Setup
+
+- The board starts with two black and two white disks at the center.
+  
+- Each player has 30 disks.
+
+## How the Game Proceeds
+
+1. Players take turns placing a disk on an empty square adjacent to an opponent’s piece.
+   
+2. Legal moves (outflanking) enclose a straight line of opponent’s pieces, which are then flipped to the player’s color.
+   
+3. The game continues until no more moves are possible.
+   
+4. The player with the most disks of their color wins.
+
+## Game Rules
+
+- Black moves first.
+  
+- If a player cannot flip at least one opponent disk, they miss their turn.
+  
+- A disk may outflank disks in any direction.
+  
+- Players cannot skip over their own disks to outflank.
+  
+- Disks must be outflanked as a direct result of the move.
+  
+- The game may end if a player runs out of pieces.
+
+## Project Structure
+- `controller.py`: Contains the `OthelloController` class that handles the game logic.
+  
+- `main.py`: Initializes the `OthelloController` and starts the game.
+  
+- `model.py`: Contains the `Model` class that represents the game state and implements game rules and the alpha-beta pruning algorithm.
+  
+- `player.py`: Contains the `Player` class that represents a player in the game.
+  
+- `view.py`: Contains the `OthelloView` class that provides a graphical user interface using Tkinter.
+
+## Usage
+
+- Run the game using Python and follow the prompts to play against the computer. 
+
+- Select the difficulty level to adjust the depth of the alpha-beta pruning algorithm.
+
+## Contributors
+
+We would like to thank the following contributors to this project:
+
+- [Shahd Osama](https://github.com/shahdosama10).
+  
+- [Ahmed Saad](https://github.com/ahmedsaad123456).
+  
+- [Ahmed Adel](https://github.com/Dola1122).
+
+- [Yousef Hussien](https://github.com/yousefhussien99).
+
+
+---
+
+Feel free to contribute to this project by opening issues or submitting pull requests.
